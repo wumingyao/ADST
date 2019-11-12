@@ -36,9 +36,8 @@
 * 百度云网盘链接：https://pan.baidu.com/s/1bALCLtrxYcGQb9P1zbgFMg 
 * 提取码：rami
 
-=======
->>>>>>> 8e01c9a7f2416a424f84bc85569e6b60fd434eca
-### Geoman文件夹
-* 数据预处理已完成，处理模型的时候出现维度不匹配的错误，尚未解决
+
+### Geoman基线链接
+* https://github.com/wumingyao/GeoMAN.git
 
 
