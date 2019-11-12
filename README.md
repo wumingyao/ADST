@@ -30,7 +30,6 @@
 ### models文件夹
 * 存放各类模型脚本
 
-<<<<<<< HEAD
 ### origin_dataSet
 * 存放原始数据文件(.csv)
 * 百度云网盘链接：https://pan.baidu.com/s/1bALCLtrxYcGQb9P1zbgFMg 
