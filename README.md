@@ -16,6 +16,10 @@
 * 该脚本用于训练模型，分别是ADST模型(stresnet)、LSTM、arima模型的训练，模型参数对应在config.py里面修改
 * 执行python train.py
 
+### train_multi.py
+* 该脚本用于训练ADST多步模型，模型参数对应在config.py里面修改
+* 执行python train_multi.py
+
 ### config.py
 * 修改模型配置参数脚本
 
