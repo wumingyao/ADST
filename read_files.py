@@ -68,15 +68,12 @@ def getMetroFlow(datetime, stations, status):
 
 
 def read_filesdata_to_npy(path, raw_node_data_path, raw_edge_data_path):
-<<<<<<< HEAD
     """
     :param path: the path of origin files(.csv)
     :param raw_node_data_path: the saving path of raw_node_data file(.npy)
     :param raw_edge_data_path:the saving path of raw_edge_data file(.npy)
     :return:
     """
-=======
->>>>>>> 8e01c9a7f2416a424f84bc85569e6b60fd434eca
     Metro_Flow_Matrix = np.zeros([N_days * N_hours * N_time_slice, N_station, N_flow])  # (144,81,2)
     # 一天的地铁过渡流矩阵
     Metro_Edge_Flow_Matrix = np.zeros([N_days * N_hours * N_time_slice, N_station, N_station])  # (144,81,81)
@@ -122,11 +119,8 @@ def read_filesdata_to_npy(path, raw_node_data_path, raw_edge_data_path):
                                            + segment, start_station, end_station] += 1
     np.save(raw_node_data_path, Metro_Flow_Matrix)
     np.save(raw_edge_data_path, Metro_Edge_Flow_Matrix)
-<<<<<<< HEAD
 
 
 if __name__ == '__main__':
     path = './origin_dataSet/Metro_train/'
     read_filesdata_to_npy(path, './npy/train_data/raw_node_data_day.py', './npy/train_data/raw_edge_data_day.py')
-=======
->>>>>>> 8e01c9a7f2416a424f84bc85569e6b60fd434eca
