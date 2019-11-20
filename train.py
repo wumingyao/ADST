@@ -841,6 +841,6 @@ if __name__ == '__main__':
     # --------------------------------LSTM训练-end---------------------------------------#
 
     # --------------------------------Arima训练-start---------------------------------------#
-    data_train = np.load('./npy/train_data/raw_node_data.npy') / 30
+    data_train = np.load('./npy/train_data/raw_node_data.npy')/ 30
     train_Arima(data_train)
     # --------------------------------Arima训练-end---------------------------------------#

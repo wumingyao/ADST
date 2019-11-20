@@ -31,8 +31,16 @@
 * test_data:存放测试所需要的npy文件
 * mae_compare:存放真实值与预测值的npy文件
 
+### train_TaxiBJ.py
+* 该脚本使用TaxiBJ数据集训练ADST模型
+
+### test_TaxiBJ.py
+* 该脚本用于测试使用TaxiBJ数据集训练的ADST模型
+
 ### models文件夹
 * 存放各类模型脚本
+
+
 
 ### origin_dataSet
 * 存放原始数据文件(.csv)
