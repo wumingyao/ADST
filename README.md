@@ -37,6 +37,9 @@
 ### test_TaxiBJ.py
 * 该脚本用于测试使用TaxiBJ数据集训练的ADST模型
 
+### errors.py
+* 四个指标脚本，期中mase需要在python2环境下，导入pycast包
+
 ### models文件夹
 * 存放各类模型脚本
 

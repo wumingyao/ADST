@@ -66,13 +66,10 @@ def mae_compute(truth, predict):
     # eval_01_25.py生成的文件，替换这里的文件名字，这方面可以再想一想后处理算法来提升精度
     predict = predict * 2945
     predict = np.around(predict, 0)
-    # predict[(predict < 10) & (predict > 0)] =2
     predict[predict < 3] = 0  # 玄学2
     # 去掉站点id=54的信息，不用进行比较
     truth2 = np.zeros((144, 80, 2))
     predict2 = np.zeros((144, 80, 2))
-    # print(truth.shape)
-    # print(predict.shape)
     for i in range(truth.shape[1] - 1):
         if i < 53:
             truth2[:, i, :] = truth[:, i, :]
@@ -80,8 +77,6 @@ def mae_compute(truth, predict):
         elif i > 53:
             truth2[:, i - 1, :] = truth[:, i, :]
             predict2[:, i - 1, :] = predict[:, i, :]
-    # print(truth2.shape)
-    # print(predict2.shape)
 
     # 看第一个loss(mae)
     loss_matrix = np.abs(truth2 - predict2)
