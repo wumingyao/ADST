@@ -15,7 +15,6 @@ def train_Arima(data):
     predict_arima = np.zeros(shape=(config.N_hours * config.N_time_slice, config.N_station, config.N_flow))
     data = data / 30
     arima_para = {}
-    # print(int(random.random()*10))
     arima_para['p'] = 1
     arima_para['d'] = 0
     arima_para['q'] = 0
@@ -83,8 +82,6 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
 
     # 生成训练样本（也很关键）
     data, target = generate_x_y(Metro_Flow_Matrix, len_seq1, len_seq2, len_seq3, len_pre)  # type为tuple
-    # print('data.shape=', data.shape)
-    # print('target.shape=', target.shape)
     edge_data, edge_target = generate_x_y(Metro_Edge_Flow_Matrix, len_seq1, len_seq2, len_seq3, len_pre)
 
     # tuple to array
@@ -94,47 +91,31 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     node_data_1 = np.array(week)
     node_data_2 = np.array(day)
     node_data_3 = np.array(hour)
-    # print("node_data_1.shape=", node_data_1.shape, "node_data_2.shape=", node_data_2.shape, "node_data_3.shape=",
-    #       node_data_3.shape)
 
     week, day, hour = zip(*edge_data)
     edge_data_1 = np.array(week)
     edge_data_2 = np.array(day)
     edge_data_3 = np.array(hour)
-    # print("edge_data_1.shape=", edge_data_1.shape, "edge_data_2.shape=", edge_data_2.shape, "edge_data_3.shape=",
-    #       edge_data_3.shape)
 
     target = np.array(target)
-    # print("target.shape=", target.shape)
     edge_target = np.array(edge_target)
-    # print("edge_target.shape=", edge_target.shape)
 
     # 从数组的形状中删除单维度条目，即把shape中为1的维度去掉
     target = np.squeeze(target, axis=1)
     edge_target = np.squeeze(edge_target, axis=1)
-    # print("target.shape=", target.shape)
-    # print("edge_target.shape=", edge_target.shape)
     # 根据edge_target获取mask矩阵
-    # 这里用mask矩阵有什么用
     mask = edge_target == 0
     mx = np.ma.array(edge_target, mask=mask)
     mask_matrix = mx.mask + 0
     # ——————————————————————————————重新组织数据——————————————————————————————————
     # 将data切割出recent\period\trend数据
     length = node_data_1.shape[0]
-    # print("length=", length)
     xr_train = np.zeros([length, N_station, len_seq3 * N_flow])
-    # print("xr_train.shape=", xr_train.shape)
     xp_train = np.zeros([length, N_station, len_seq2 * nb_flow])
-    # print("xp_train.shape=", xp_train.shape)
     xt_train = np.zeros([length, N_station, len_seq1 * nb_flow])
-    # print("xt_train.shape=", xt_train.shape)
     xredge_train = np.zeros([length, N_station, len_seq3 * N_station])
-    # print("xredge_train.shape=", xredge_train.shape)
     xpedge_train = np.zeros([length, N_station, len_seq2 * N_station])
-    # print("xpedge_train.shape=", xpedge_train.shape)
     xtedge_train = np.zeros([length, N_station, len_seq1 * N_station])
-    # print("xtedge_train.shape=", xtedge_train.shape)
     # 装载xr_train, xp_train, xt_train等最终样本，所以len_seq * nb_flow = 3*2
     for i in range(length):
         for j in range(len_seq3):
@@ -275,8 +256,6 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     x_train_external_information4 = x_true_external_information4[indices]
     x_train_external_information5 = x_true_external_information5[indices]
     x_train_external_information9 = x_true_external_information9[indices]
-    # print("xr_train.shape=", xr_train.shape)
-    # print("x_train_external_information1.shape=", x_train_external_information1.shape)
     target = target[indices]
     edge_target = edge_target[indices]
     mask_matrix = mask_matrix[indices]
@@ -337,7 +316,6 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     for i in range(val_length):
         for j in range(len_seq2):
             for k in range(2):
-                # print(val_node_data_2[i, j, :, k])
                 xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
     for i in range(val_length):
         for j in range(len_seq1):
@@ -474,8 +452,6 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
 
     # 生成训练样本（也很关键）
     data, target = generate_x_y(Metro_Flow_Matrix, len_seq1, len_seq2, len_seq3, len_pre)  # type为tuple
-    # print('data.shape=', data.shape)
-    # print('target.shape=', target.shape)
     edge_data, edge_target = generate_x_y(Metro_Edge_Flow_Matrix, len_seq1, len_seq2, len_seq3, len_pre)
 
     # tuple to array
@@ -485,26 +461,18 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     node_data_1 = np.array(week)
     node_data_2 = np.array(day)
     node_data_3 = np.array(hour)
-    # print("node_data_1.shape=", node_data_1.shape, "node_data_2.shape=", node_data_2.shape, "node_data_3.shape=",
-    #       node_data_3.shape)
 
     week, day, hour = zip(*edge_data)
     edge_data_1 = np.array(week)
     edge_data_2 = np.array(day)
     edge_data_3 = np.array(hour)
-    # print("edge_data_1.shape=", edge_data_1.shape, "edge_data_2.shape=", edge_data_2.shape, "edge_data_3.shape=",
-    #       edge_data_3.shape)
 
     target = np.array(target)
-    # print("target.shape=", target.shape)
     edge_target = np.array(edge_target)
-    # print("edge_target.shape=", edge_target.shape)
 
     # 从数组的形状中删除单维度条目，即把shape中为1的维度去掉
     target = np.squeeze(target, axis=1)
     edge_target = np.squeeze(edge_target, axis=1)
-    # print("target.shape=", target.shape)
-    # print("edge_target.shape=", edge_target.shape)
     # 根据edge_target获取mask矩阵
     # 这里用mask矩阵有什么用
     mask = edge_target == 0
@@ -513,19 +481,12 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     # ——————————————————————————————重新组织数据——————————————————————————————————
     # 将data切割出recent\period\trend数据
     length = node_data_1.shape[0]
-    # print("length=", length)
     xr_train = np.zeros([length, N_station, len_seq3 * N_flow])
-    # print("xr_train.shape=", xr_train.shape)
     xp_train = np.zeros([length, N_station, len_seq2 * nb_flow])
-    # print("xp_train.shape=", xp_train.shape)
     xt_train = np.zeros([length, N_station, len_seq1 * nb_flow])
-    # print("xt_train.shape=", xt_train.shape)
     xredge_train = np.zeros([length, N_station, len_seq3 * N_station])
-    # print("xredge_train.shape=", xredge_train.shape)
     xpedge_train = np.zeros([length, N_station, len_seq2 * N_station])
-    # print("xpedge_train.shape=", xpedge_train.shape)
     xtedge_train = np.zeros([length, N_station, len_seq1 * N_station])
-    # print("xtedge_train.shape=", xtedge_train.shape)
     # 装载xr_train, xp_train, xt_train等最终样本，所以len_seq * nb_flow = 3*2
     for i in range(length):
         for j in range(len_seq3):
@@ -666,8 +627,6 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     x_train_external_information4 = x_true_external_information4[indices]
     x_train_external_information5 = x_true_external_information5[indices]
     x_train_external_information9 = x_true_external_information9[indices]
-    # print("xr_train.shape=", xr_train.shape)
-    # print("x_train_external_information1.shape=", x_train_external_information1.shape)
     target = target[indices]
     edge_target = edge_target[indices]
     mask_matrix = mask_matrix[indices]
@@ -728,7 +687,6 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     for i in range(val_length):
         for j in range(len_seq2):
             for k in range(2):
-                # print(val_node_data_2[i, j, :, k])
                 xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
     for i in range(val_length):
         for j in range(len_seq1):

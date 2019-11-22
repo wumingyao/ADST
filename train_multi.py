@@ -63,18 +63,14 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     node_data_1 = np.array(week)
     node_data_2 = np.array(day)
     node_data_3 = np.array(hour)
-    # print("node_data_1.shape=", node_data_1.shape, "node_data_2.shape=", node_data_2.shape, "node_data_3.shape=",
     #       node_data_3.shape)
 
     week, day, hour = zip(*edge_data)
     edge_data_1 = np.array(week)
     edge_data_2 = np.array(day)
     edge_data_3 = np.array(hour)
-    # print("edge_data_1.shape=", edge_data_1.shape, "edge_data_2.shape=", edge_data_2.shape, "edge_data_3.shape=",
-    #       edge_data_3.shape)
 
     target = np.array(target)
-    # print("target.shape=", target.shape)
     edge_target = np.array(edge_target)
 
     # ——————————————————————————————重新组织数据——————————————————————————————————
@@ -226,8 +222,6 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     x_train_external_information4 = x_true_external_information4[indices]
     x_train_external_information5 = x_true_external_information5[indices]
     x_train_external_information9 = x_true_external_information9[indices]
-    # print("xr_train.shape=", xr_train.shape)
-    # print("x_train_external_information1.shape=", x_train_external_information1.shape)
     target = target[indices]
     edge_target = edge_target[indices]
     # ————————————————————————————————构建验证集合(24-25号数据作为验证集)—————————————————————————————————————
@@ -281,7 +275,6 @@ def train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
     for i in range(val_length):
         for j in range(len_seq2):
             for k in range(2):
-                # print(val_node_data_2[i, j, :, k])
                 xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
     for i in range(val_length):
         for j in range(len_seq1):

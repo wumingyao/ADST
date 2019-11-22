@@ -171,7 +171,6 @@ def generate_x_y(train, num_of_weeks, num_of_days, num_of_hours, num_for_predict
 
 
 def train_stresnet(Metro_Flow_Matrix):
-    print(Metro_Flow_Matrix.shape)
     warnings.filterwarnings('ignore')
 
     N_days = 31  # 用了多少天的数据(目前17个工作日)
@@ -221,14 +220,9 @@ def train_stresnet(Metro_Flow_Matrix):
     node_data_1 = np.array(week)
     node_data_2 = np.array(day)
     node_data_3 = np.array(hour)
-    # print("node_data_1.shape=", node_data_1.shape, "node_data_2.shape=", node_data_2.shape, "node_data_3.shape=",
-    #       node_data_3.shape)
 
-    # print("edge_data_1.shape=", edge_data_1.shape, "edge_data_2.shape=", edge_data_2.shape, "edge_data_3.shape=",
-    #       edge_data_3.shape)
 
     target = np.array(target)
-    # print("target.shape=", target.shape)
 
     # ——————————————————————————————重新组织数据——————————————————————————————————
     # 将data切割出recent\period\trend数据
@@ -264,7 +258,6 @@ def train_stresnet(Metro_Flow_Matrix):
     xp_train = xp_train[indices]
     xt_train = xt_train[indices]
     # 1、2、4、9为Embedding, 5为Dense
-    # print("x_train_external_information1.shape=", x_train_external_information1.shape)
     target = target[indices]
     # ————————————————————————————————构建验证集合(24-25号数据作为验证集)—————————————————————————————————————
     # 构造得有点复杂.....2019.05.22
@@ -274,7 +267,6 @@ def train_stresnet(Metro_Flow_Matrix):
     node_day_18 = np.vstack((node_day_18, node_day_18))
     node_day_18 = np.vstack((node_day_18, node_day_18))
     val_node_data = np.concatenate((node_day_18, node_day_24, node_day_25), axis=0)
-    print(val_node_data.shape)
 
     # raw_edge_data = np.load('./npy/train_data/raw_edge_data.npy')
     # edge_day_24 = raw_edge_data[-144:, :, :]
@@ -320,7 +312,6 @@ def train_stresnet(Metro_Flow_Matrix):
     for i in range(val_length):
         for j in range(len_seq2):
             for k in range(2):
-                # print(val_node_data_2[i, j, :, k])
                 xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
     for i in range(val_length):
         for j in range(len_seq1):
