@@ -68,21 +68,33 @@ def mae_compute(truth, predict):
     predict = np.around(predict, 0)
     # predict[(predict < 10) & (predict > 0)] =2
     predict[predict < 3] = 0  # 玄学2
+    # 去掉站点id=54的信息，不用进行比较
+    truth2 = np.zeros((144, 80, 2))
+    predict2 = np.zeros((144, 80, 2))
+    # print(truth.shape)
+    # print(predict.shape)
+    for i in range(truth.shape[1] - 1):
+        if i < 53:
+            truth2[:, i, :] = truth[:, i, :]
+            predict2[:, i, :] = predict[:, i, :]
+        elif i > 53:
+            truth2[:, i - 1, :] = truth[:, i, :]
+            predict2[:, i - 1, :] = predict[:, i, :]
+    # print(truth2.shape)
+    # print(predict2.shape)
 
     # 看第一个loss(mae)
-    loss_matrix = np.abs(truth - predict)
-    mae = loss_matrix.sum() / (truth.shape[0] * truth.shape[1] * truth.shape[2])
+    loss_matrix = np.abs(truth2 - predict2)
+    mae = loss_matrix.sum() / (truth2.shape[0] * truth2.shape[1] * truth2.shape[2])
 
     # 看第二个loss(mape)
     # truth[np.where(truth == 0)] = 0.0001
-    loss_matrix2 = np.clip(loss_matrix, 0.001, 3000) / np.clip(truth, 0.001, 3000)
-    mape = loss_matrix2.sum() / (truth.shape[0] * truth.shape[1] * truth.shape[2])
+    loss_matrix2 = np.clip(loss_matrix, 0.001, 3000) / np.clip(truth2, 0.001, 3000)
+    mape = loss_matrix2.sum() / (truth2.shape[0] * truth2.shape[1] * truth2.shape[2])
 
-    # loss_matrix1 = np.abs(truth - predict1)
-    # loss1 = loss_matrix1.sum()/(144*81*2)
-    # loss_matrix2 = np.abs(truth - predict2)
-    # loss2 = loss_matrix2.sum()/(144*81*2)
-    mdae = np.median(np.abs(truth - predict))
+    # 第三个评价指标
+    mdae = np.median(np.abs(truth2 - predict2))
+
     print(mae, mape, mdae)
     return mae, mape
 

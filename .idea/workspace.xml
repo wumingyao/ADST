@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a67c2611-899b-4280-a275-01d89437a5fd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/npy/mae_compare/predict_day25.npy" beforeDir="false" afterPath="$PROJECT_DIR$/npy/mae_compare/predict_day25.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +16,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_TaxiBJ.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="860">
+            <state relative-caret-position="2109">
               <caret line="210" column="21" selection-start-line="210" selection-start-column="4" selection-end-line="210" selection-end-column="21" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -30,48 +29,15 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="38" column="50" selection-start-line="38" selection-start-column="50" selection-end-line="38" selection-end-column="50" />
+            <state relative-caret-position="-1159">
+              <caret line="205" column="2" selection-start-line="205" selection-start-column="2" selection-end-line="205" selection-end-column="2" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
-                <element signature="e#1393#19864#0" />
+                <element signature="e#362#1323#0" />
                 <element signature="e#19930#38399#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libs/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1501">
-              <caret line="79" column="4" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test_TaxiBJ.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1634">
-              <caret line="92" column="12" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="12" />
-              <folding>
-                <element signature="e#23#38#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/resnet_TaxiBj.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-285">
-              <caret line="71" column="26" selection-start-line="71" selection-start-column="26" selection-end-line="71" selection-end-column="26" />
-              <folding>
-                <element signature="e#76#113#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -80,8 +46,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="7" column="16" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="16" />
+            <state relative-caret-position="38">
+              <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -89,13 +55,24 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="602" column="1" selection-start-line="602" selection-start-column="1" selection-end-line="603" selection-end-column="35" />
+            <state relative-caret-position="171">
+              <caret line="702" column="27" selection-start-line="702" selection-start-column="27" selection-end-line="702" selection-end-column="27" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
                 <element signature="e#758#1231#0" />
                 <element signature="e#1324#1722#0" />
-                <element signature="e#1762#2681#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="437">
+              <caret line="38" selection-start-line="38" selection-end-line="38" />
+              <folding>
+                <element signature="e#1181#1196#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -139,9 +116,9 @@
       <find>1024</find>
       <find>print</find>
       <find>generate_x_y</find>
-      <find>100</find>
       <find>19day</find>
       <find>28day</find>
+      <find>100</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -163,17 +140,18 @@
         <option value="$PROJECT_DIR$/models/resnet_TaxiBj.py" />
         <option value="$PROJECT_DIR$/../柯其学/generatedata.py" />
         <option value="$PROJECT_DIR$/libs/utils.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/train_TaxiBJ.py" />
         <option value="$PROJECT_DIR$/test_TaxiBJ.py" />
-        <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/train.py" />
+        <option value="$PROJECT_DIR$/config.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/mase.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="193" />
-    <option name="y" value="107" />
+    <option name="x" value="722" />
+    <option name="y" value="50" />
     <option name="width" value="697" />
     <option name="height" value="745" />
   </component>
@@ -182,39 +160,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="log" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="log" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="stresnet" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="npy" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="npy" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="train_data" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -231,12 +176,23 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="ADST" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="D:\ADST" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../PycharmProjects/djangoProjects/MarkSystem" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -389,7 +345,8 @@
       <workItem from="1574057342221" duration="18636000" />
       <workItem from="1574144988110" duration="489000" />
       <workItem from="1574171485246" duration="4465000" />
-      <workItem from="1574230485278" duration="7394000" />
+      <workItem from="1574230485278" duration="7807000" />
+      <workItem from="1574384575298" duration="4263000" />
     </task>
     <servers />
   </component>
@@ -423,7 +380,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92640000" />
+    <option name="totallyTimeSpent" value="97316000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -438,11 +395,11 @@
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26096824" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2647504" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32903227" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.31774193" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4516129" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -700,31 +657,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/libs/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1501">
+        <state relative-caret-position="19">
           <caret line="79" column="4" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/resnet_TaxiBj.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-285">
-          <caret line="71" column="26" selection-start-line="71" selection-start-column="26" selection-end-line="71" selection-end-column="26" />
-          <folding>
-            <element signature="e#76#113#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="16" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/train_TaxiBJ.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="860">
+        <state relative-caret-position="2109">
           <caret line="210" column="21" selection-start-line="210" selection-start-column="4" selection-end-line="210" selection-end-column="21" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
@@ -736,37 +676,63 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_TaxiBJ.py">
+    <entry file="file://$PROJECT_DIR$/models/resnet_TaxiBj.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1634">
-          <caret line="92" column="12" selection-start-line="92" selection-start-column="12" selection-end-line="92" selection-end-column="12" />
+        <state relative-caret-position="19">
+          <caret line="71" column="26" selection-start-line="71" selection-start-column="26" selection-end-line="71" selection-end-column="26" />
           <folding>
-            <element signature="e#23#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="602" column="1" selection-start-line="602" selection-start-column="1" selection-end-line="603" selection-end-column="35" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <element signature="e#758#1231#0" />
-            <element signature="e#1324#1722#0" />
-            <element signature="e#1762#2681#0" />
+            <element signature="e#76#113#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="38" column="50" selection-start-line="38" selection-start-column="50" selection-end-line="38" selection-end-column="50" />
+        <state relative-caret-position="-1159">
+          <caret line="205" column="2" selection-start-line="205" selection-start-column="2" selection-end-line="205" selection-end-column="2" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
-            <element signature="e#1393#19864#0" />
+            <element signature="e#362#1323#0" />
             <element signature="e#19930#38399#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_TaxiBJ.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-399">
+          <caret line="112" column="23" lean-forward="true" selection-start-line="112" selection-start-column="23" selection-end-line="112" selection-end-column="23" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="702" column="27" selection-start-line="702" selection-start-column="27" selection-end-line="702" selection-end-column="27" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <element signature="e#758#1231#0" />
+            <element signature="e#1324#1722#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+          <folding>
+            <element signature="e#1181#1196#0" expanded="true" />
           </folding>
         </state>
       </provider>
