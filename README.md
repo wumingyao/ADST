@@ -51,6 +51,6 @@
 
 
 ### Geoman基线链接
-* https://github.com/wumingyao/GeoMAN.git
+* https://github.com/wumingyao/MyGeoMAN.git
 
 

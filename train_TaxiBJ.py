@@ -2,6 +2,7 @@ from models.MyArima import *
 import numpy as np
 # from libs.utils import generate_x_y
 from models.resnet_TaxiBj import stresnet_TaxiBJ
+from models.LSTM_TaxiBJ import lstm_TaxiBJ
 import keras.backend as K
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler, EarlyStopping
 import config
@@ -201,14 +202,12 @@ def train_stresnet(Metro_Flow_Matrix):
 
     # ——————————————————————————————组织数据———————————————————————————————
     # 由于>25的数量极其少，将>25的值全都默认为25
-    # Metro_Flow_Matrix[np.where(Metro_Flow_Matrix > 25)] = 25
 
     # 还是归一化
     # 点流/3000
     # 边流/233
     node_scale_ratio = 30  # 预处理第二步 相当于一共是/3000
     Metro_Flow_Matrix /= node_scale_ratio
-    edge_scale_ratio = 233.0
 
     # 生成训练样本（也很关键）
     data, target = generate_x_y(Metro_Flow_Matrix, len_seq1, len_seq2, len_seq3, 1)  # type为tuple
@@ -221,7 +220,6 @@ def train_stresnet(Metro_Flow_Matrix):
     node_data_2 = np.array(day)
     node_data_3 = np.array(hour)
 
-
     target = np.array(target)
 
     # ——————————————————————————————重新组织数据——————————————————————————————————
@@ -230,9 +228,6 @@ def train_stresnet(Metro_Flow_Matrix):
     xr_train = np.zeros([length, N_station, len_seq3 * N_flow])
     xp_train = np.zeros([length, N_station, len_seq2 * nb_flow])
     xt_train = np.zeros([length, N_station, len_seq1 * nb_flow])
-    xredge_train = np.zeros([length, N_station, len_seq3 * N_station])
-    xpedge_train = np.zeros([length, N_station, len_seq2 * N_station])
-    xtedge_train = np.zeros([length, N_station, len_seq1 * N_station])
     # 装载xr_train, xp_train, xt_train等最终样本，所以len_seq * nb_flow = 3*2
     for i in range(length):
         for j in range(len_seq3):
@@ -268,19 +263,11 @@ def train_stresnet(Metro_Flow_Matrix):
     node_day_18 = np.vstack((node_day_18, node_day_18))
     val_node_data = np.concatenate((node_day_18, node_day_24, node_day_25), axis=0)
 
-    # raw_edge_data = np.load('./npy/train_data/raw_edge_data.npy')
-    # edge_day_24 = raw_edge_data[-144:, :, :]
-    # edge_day_18 = raw_edge_data[144 * 12:-144, :, :]
-    # edge_day_25 = np.load('./npy/train_data/day_25_edge.npy')
-    # val_edge_data = np.concatenate((edge_day_18, edge_day_24, edge_day_25), axis=0)
-
     # normalization
     val_node_data /= node_scale_ratio
-    # val_edge_data /= edge_scale_ratio
 
     # 构建好验证集的样本和标签
     val_node_data, val_node_target = generate_x_y(val_node_data, len_seq1, len_seq2, len_seq3, 1)
-    # val_edge_data, val_edge_target = generate_x_y(val_edge_data, len_seq1, len_seq2, len_seq3, 1)
 
     # tuple-->array
     week, day, hour = zip(*val_node_data)
@@ -288,22 +275,13 @@ def train_stresnet(Metro_Flow_Matrix):
     val_node_data_2 = np.array(day)
     val_node_data_3 = np.array(hour)
 
-    # week, day, hour = zip(*val_edge_data)
-    # val_edge_data_1 = np.array(week)
-    # val_edge_data_2 = np.array(day)
-    # val_edge_data_3 = np.array(hour)
-
     val_node_target = np.array(val_node_target)
-    # val_edge_target = np.array(val_edge_target)
 
     # # 将data切割出recent\period\trend数据
     val_length = val_node_data_1.shape[0]
     xr_val = np.zeros([val_length, N_station, len_seq3 * N_flow])
     xp_val = np.zeros([val_length, N_station, len_seq2 * N_flow])
     xt_val = np.zeros([val_length, N_station, len_seq1 * N_flow])
-    # xredge_val = np.zeros([val_length, N_station, len_seq3 * N_station])
-    # xpedge_val = np.zeros([val_length, N_station, len_seq2 * N_station])
-    # xtedge_val = np.zeros([val_length, N_station, len_seq1 * N_station])
     # # 适应st_resnet，由于没有LSTM，所以len_seq * nb_flow = 3*2
     for i in range(val_length):
         for j in range(len_seq3):
@@ -317,55 +295,6 @@ def train_stresnet(Metro_Flow_Matrix):
         for j in range(len_seq1):
             for k in range(2):
                 xt_val[i, :, j * 2 + k] = val_node_data_1[i, j, :, k]
-    #
-    # for i in range(val_length):
-    #     for j in range(len_seq3):
-    #         for k in range(81):
-    #             xredge_val[i, :, j * 81 + k] = val_edge_data_3[i, j, :, k]
-    # for i in range(val_length):
-    #     for j in range(len_seq2):
-    #         for k in range(81):
-    #             xpedge_val[i, :, j * 81 + k] = val_edge_data_2[i, j, :, k]
-    # for i in range(val_length):
-    #     for j in range(len_seq1):
-    #         for k in range(81):
-    #             xtedge_val[i, :, j * 81 + k] = val_edge_data_1[i, j, :, k]
-    # # ——————————————————————添加验证集外部信息————————————————————————
-    # # 默认了00:00-00:40的人流量均为0
-    # # 0125是周五,weekday信息
-    # x_val_external_information1 = np.zeros([24 * 6, 1])
-    # x_val_external_information1[:, 0] = 4  # 代表周五
-    # # 时间片信息
-    # x_val_external_information2 = np.zeros([24 * 6, 1])
-    # HOUR = 0
-    # for i in range(0, 24 * 6):
-    #     x_val_external_information2[i, 0] = HOUR
-    #     HOUR = HOUR + 1
-    # # 天气信息,25号为多云
-    # x_val_external_information4 = np.zeros([24 * 6, 1])
-    # x_val_external_information4[:, 0] = 1
-    # # 闸机信息
-    # x_val_external_information5 = np.zeros([24 * 6, 81])
-    # t = np.load('./npy/train_data/Two_more_features.npy')
-    # t = t[:, 0]
-    # for i in range(144):
-    #     x_val_external_information5[i, :] = t
-    # # 早晚高峰、高峰、平峰信息
-    # x_val_external_information9 = np.zeros([N_hours * N_time_slice, 1])
-    # # #——————————————————早晚高峰—————————————————————
-    # x_val_external_information9[39:54, 0] = 2  # 7：30 - 9：00
-    # x_val_external_information9[102:114, 0] = 2  # 17：00 - 19：00
-    # # #——————————————————高峰—————————————————————————
-    # x_val_external_information9[33:39, 0] = 1  # 6:30-7:30
-    # x_val_external_information9[63:70, 0] = 1  # 10:30-11:30
-    # x_val_external_information9[99:102, 0] = 1  # 16:30-17:30
-    # x_val_external_information9[114:132, 0] = 1  # 19:00-22:00
-    # #------------val external information往后移一个时间片------------------
-    # x_val_external_information1 = x_val_external_information1[len(x_val_external_information1) - len(xr_val):, :]
-    # x_val_external_information2 = x_val_external_information2[len(x_val_external_information2) - len(xr_val):, :]
-    # x_val_external_information4 = x_val_external_information4[len(x_val_external_information4) - len(xr_val):, :]
-    # x_val_external_information5 = x_val_external_information5[len(x_val_external_information5) - len(xr_val):, :]
-    # x_val_external_information9 = x_val_external_information9[len(x_val_external_information9) - len(xr_val):, :]
 
     # 重新reshape一下
     val_node_target = val_node_target.reshape(
@@ -400,6 +329,194 @@ def train_stresnet(Metro_Flow_Matrix):
     pd.DataFrame(columns=['loss'], data=history.history['loss']).to_csv(config.loss_acc_csvFile, index=None)
 
 
+def train_LSTM(Metro_Flow_Matrix):
+    warnings.filterwarnings('ignore')
+
+    N_days = 31  # 用了多少天的数据(目前17个工作日)
+    N_hours = config.N_hours
+    N_time_slice = 2  # 1小时有6个时间片
+    N_station = 81  # 81个站点
+    N_flow = config.N_flow  # 进站 & 出站
+    len_seq1 = config.len_seq1  # week时间序列长度为2
+    len_seq2 = config.len_seq2  # day时间序列长度为3
+    len_seq3 = config.len_seq3  # hour时间序列长度为5
+    nb_flow = config.nb_flow  # 输入特征
+
+    # 自定义的损失函数
+    # clip将超出指定范围的数强制变为边界值
+    def my_own_loss_function(y_true, y_pred):
+        return K.mean(abs(y_true - y_pred)) + 0.01 * K.mean(
+            abs(K.clip(y_true, 0.001, 1) - K.clip(y_pred, 0.001, 1)) / K.clip(y_true, 0.001, 1)) * K.mean(
+            abs(K.clip(y_true, 0.001, 1) - K.clip(y_pred, 0.001, 1)) / K.clip(y_true, 0.001, 1))
+
+    # 学习率控制
+    def scheduler(epoch):
+        # 每隔15个epoch，学习率减小为原来的1/2
+        if epoch % 15 == 0 and epoch != 0:
+            lr = K.get_value(model.optimizer.lr)
+            K.set_value(model.optimizer.lr, lr * 0.5)
+            print("lr changed to {}".format(lr * 0.5))
+        return K.get_value(model.optimizer.lr)
+
+    # ——————————————————————————————组织数据———————————————————————————————
+    # 由于>25的数量极其少，将>25的值全都默认为25
+
+    # 还是归一化
+    # 点流/3000
+    # 边流/233
+    node_scale_ratio = 30  # 预处理第二步 相当于一共是/3000
+    Metro_Flow_Matrix /= node_scale_ratio
+
+    # 生成训练样本（也很关键）
+    data, target = generate_x_y(Metro_Flow_Matrix, len_seq1, len_seq2, len_seq3, 1)  # type为tuple
+
+    # tuple to array
+    # zip()函数用于将可迭代的对象作为参数，将对象中对应的元素打包成一个个元组，然后返回由这些元组组成的列表。
+    week, day, hour = zip(*data)
+    # 矩阵转换为array
+    node_data_1 = np.array(week)
+    node_data_2 = np.array(day)
+    node_data_3 = np.array(hour)
+
+    target = np.array(target)
+
+    # ——————————————————————————————重新组织数据——————————————————————————————————
+    # 将data切割出recent\period\trend数据
+    length = node_data_1.shape[0]
+    xr_train = np.zeros([length, N_station, len_seq3 * N_flow])
+    xp_train = np.zeros([length, N_station, len_seq2 * nb_flow])
+    xt_train = np.zeros([length, N_station, len_seq1 * nb_flow])
+    # 装载xr_train, xp_train, xt_train等最终样本，所以len_seq * nb_flow = 3*2
+    for i in range(length):
+        for j in range(len_seq3):
+            for k in range(2):
+                # 组装当前前5个时间片矩阵
+                xr_train[i, :, j * 2 + k] = node_data_3[i, j, :, k]
+    for i in range(length):
+        for j in range(len_seq2):
+            for k in range(2):
+                # 组装前一天前3个时间片矩阵
+                xp_train[i, :, j * 2 + k] = node_data_2[i, j, :, k]
+    for i in range(length):
+        for j in range(len_seq1):
+            for k in range(2):
+                # 组装前一周对应的前2个时间片矩阵
+                xt_train[i, :, j * 2 + k] = node_data_1[i, j, :, k]
+
+    # ——————————————————————————————SHUFFLE—————————————————————————————————————————————
+    indices = np.arange(length)
+    # 打乱
+    np.random.shuffle(indices)
+    xr_train = xr_train[indices]  # learning task: (2302, 81, 10)->(2302, 81, 2)
+    xp_train = xp_train[indices]
+    xt_train = xt_train[indices]
+    # 1、2、4、9为Embedding, 5为Dense
+    target = target[indices]
+    # ————————————————————————————————构建验证集合(24-25号数据作为验证集)—————————————————————————————————————
+    # 构造得有点复杂.....2019.05.22
+    node_day_24 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
+    node_day_25 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
+    node_day_18 = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
+    node_day_18 = np.vstack((node_day_18, node_day_18))
+    node_day_18 = np.vstack((node_day_18, node_day_18))
+    val_node_data = np.concatenate((node_day_18, node_day_24, node_day_25), axis=0)
+
+    # normalization
+    val_node_data /= node_scale_ratio
+
+    # 构建好验证集的样本和标签
+    val_node_data, val_node_target = generate_x_y(val_node_data, len_seq1, len_seq2, len_seq3, 1)
+
+    # tuple-->array
+    week, day, hour = zip(*val_node_data)
+    val_node_data_1 = np.array(week)
+    val_node_data_2 = np.array(day)
+    val_node_data_3 = np.array(hour)
+
+    val_node_target = np.array(val_node_target)
+
+    # # 将data切割出recent\period\trend数据
+    val_length = val_node_data_1.shape[0]
+    xr_val = np.zeros([val_length, N_station, len_seq3 * N_flow])
+    xp_val = np.zeros([val_length, N_station, len_seq2 * N_flow])
+    xt_val = np.zeros([val_length, N_station, len_seq1 * N_flow])
+    # # 适应st_resnet，由于没有LSTM，所以len_seq * nb_flow = 3*2
+    for i in range(val_length):
+        for j in range(len_seq3):
+            for k in range(2):
+                xr_val[i, :, j * 2 + k] = val_node_data_3[i, j, :, k]
+    for i in range(val_length):
+        for j in range(len_seq2):
+            for k in range(2):
+                xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
+    for i in range(val_length):
+        for j in range(len_seq1):
+            for k in range(2):
+                xt_val[i, :, j * 2 + k] = val_node_data_1[i, j, :, k]
+
+    # 重新reshape一下
+    val_node_target = val_node_target.reshape(
+        [val_node_target.shape[0], val_node_target.shape[1] * val_node_target.shape[2], val_node_target.shape[3]])
+    target = target.reshape([target.shape[0], target.shape[1] * target.shape[2], target.shape[3]])
+
+    # 这里开始跑模型，神经网络相关的，重点看这里
+    # ——————————————————————————————建立模型—————————————————————————————————————
+    model = lstm_TaxiBJ(c_conf=(len_seq3, N_flow, N_station), p_conf=(len_seq2, N_flow, N_station),
+                        t_conf=(len_seq1, N_flow, N_station))  # 这里的unit代表了大体的网络深度
+    model.compile(optimizer='adam',
+                  loss={'node_logits': my_own_loss_function}, metrics=['accuracy'])
+
+    filepath = "./log/LSTM/TaxiBJ/" + "{epoch:02d}-{loss:.8f}.hdf5"
+    if not os.path.exists("./log/LSTM/TaxiBJ/"):
+        os.makedirs("./log/LSTM/TaxiBJ/")
+    # 中途训练效果提升, 则将文件保存, 每提升一次, 保存一次
+    checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=True, save_weights_only=True,
+                                 mode='min')
+    reduce_lr = LearningRateScheduler(scheduler)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=30, verbose=0, mode='min')
+    callbacks_list = [checkpoint, reduce_lr, early_stopping]
+    K.set_value(model.optimizer.lr, 0.0001)
+    # 输入的东西要注意
+
+    history = model.fit([xr_train, xp_train, xt_train],
+                        [target],
+                        validation_data=([xr_val, xp_val, xt_val],
+                                         [val_node_target]),
+                        batch_size=config.batch_size, epochs=config.epochs, callbacks=callbacks_list)
+
+    pd.DataFrame(columns=['loss'], data=history.history['loss']).to_csv(config.loss_acc_csvFile, index=None)
+
+
+def train_Arima_TaxiBJ(data):
+    # 读数据
+    N_time_slice = 2
+    predict_arima = np.zeros(shape=(config.N_hours * N_time_slice, config.N_station, config.N_flow))
+    data = data / 30
+    arima_para = {}
+    arima_para['p'] = 1
+    arima_para['d'] = 0
+    arima_para['q'] = 0
+    arima = Arima_Class(arima_para)
+
+    for i in range(config.N_station - 1):
+        # 对第i个站点
+        for j in range(config.N_flow - 1):
+            try:
+                # 对于出站或入站
+                tr_data = data[:, i:i + 1, j:j + 1]
+                tr_data = np.squeeze(tr_data)
+                model = arima.fit(tr_data)
+                predict = arima.pred(model, 48)
+                predict = predict.reshape(len(predict), 1, 1)
+                predict_arima[:, i:i + 1, j:j + 1] = predict
+            except Exception:
+                continue
+    # 后处理
+    predict_arima = np.where(predict_arima > 0, predict_arima, 0)
+    return predict_arima
+
+
+
 if __name__ == '__main__':
     # --------------------------------stresnet训练-start---------------------------------------#
 
@@ -412,3 +529,63 @@ if __name__ == '__main__':
     train_stresnet(Metro_Flow_Matrix)
 
     # --------------------------------stresnet训练-end---------------------------------------#
+
+    # --------------------------------LSTM训练-start---------------------------------------#
+
+    # 直接从这里开始看，程序的入口，加载统计好的流量文件
+    Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
+    Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
+        [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
+         Metro_Flow_Matrix.shape[1]])
+    Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
+    train_LSTM(Metro_Flow_Matrix)
+
+    # --------------------------------LSTM训练-end---------------------------------------#
+
+    # --------------------------------Arima训练_0402-start---------------------------------------#
+    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    data_train = data_train.reshape(
+        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+         data_train.shape[1]])
+    data_train = data_train[:, 0:81, :]
+    predict_arima=train_Arima_TaxiBJ(data_train)
+    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0402.npy', predict_arima)
+    # --------------------------------Arima训练-end---------------------------------------#
+    # --------------------------------Arima训练_0403-start---------------------------------------#
+    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    data_train = data_train.reshape(
+        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+         data_train.shape[1]])
+    data_train = np.vstack((data_train, data_train1))
+    data_train = data_train[:, 0:81, :]
+    predict_arima=train_Arima_TaxiBJ(data_train)
+    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0403.npy', predict_arima)
+    # --------------------------------Arima训练_0403-end---------------------------------------#
+
+    # --------------------------------Arima训练_0404-start---------------------------------------#
+    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    data_train = data_train.reshape(
+        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+         data_train.shape[1]])
+    data_train = np.vstack((data_train, data_train1,data_train2))
+    data_train = data_train[:, 0:81, :]
+    predict_arima = train_Arima_TaxiBJ(data_train)
+    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0404.npy', predict_arima)
+    # --------------------------------Arima训练_0404-end---------------------------------------#
+
+    # --------------------------------Arima训练_0405-start---------------------------------------#
+    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    data_train3 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')
+    data_train = data_train.reshape(
+        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+         data_train.shape[1]])
+    data_train = np.vstack((data_train, data_train1, data_train2, data_train3))
+    data_train = data_train[:, 0:81, :]
+    predict_arima = train_Arima_TaxiBJ(data_train)
+    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0405.npy', predict_arima)
+    # --------------------------------Arima训练_0405-end---------------------------------------#
