@@ -8,6 +8,9 @@
 * statsmodels==0.10.1
 * windows10
 
+### ADST-Net.png
+* ADST模型网络图
+
 ### test.py
 * 该脚本用于测试模型，分别是ADST模型(stresnet)、LSTM、arima模型的训练，stresnet和LSTM所使用的模型路径在config.py里面修改
 * 执行python test.py
