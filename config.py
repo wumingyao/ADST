@@ -1,6 +1,6 @@
 import os
 
-epochs = 2
+epochs = 300
 batch_size = 64
 
 N_days = 17  # 用了多少天的数据(目前17个工作日)

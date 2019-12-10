@@ -15,6 +15,8 @@ N_days = config.N_days  # 用了多少天的数据(目前17个工作日)
 N_hours = config.N_hours
 N_time_slice = config.N_time_slice  # 1小时有6个时间片
 N_station = config.N_station  # 81个站点
+map_height = 32
+map_width = 32
 N_flow = config.N_flow  # 进站 & 出站
 len_seq1 = config.len_seq1  # week时间序列长度为2
 len_seq2 = config.len_seq2  # day时间序列长度为3
@@ -68,15 +70,14 @@ def mae_compute(truth, predict):
     predict = np.around(predict, 0)
     # predict[(predict < 10) & (predict > 0)] =2
     predict[predict < 3] = 0  # 玄学2
-
     # 看第一个loss(mae)
     loss_matrix = np.abs(truth - predict)
-    mae = loss_matrix.sum() / (truth.shape[0] * truth.shape[1] * truth.shape[2])
+    mae = loss_matrix.sum() / (truth.size)
 
     # 看第二个loss(mape)
     # truth[np.where(truth == 0)] = 0.0001
     loss_matrix2 = np.clip(loss_matrix, 0.001, 3000) / np.clip(truth, 0.001, 3000)
-    mape = loss_matrix2.sum() / (truth.shape[0] * truth.shape[1] * truth.shape[2])
+    mape = loss_matrix2.sum() / (truth.size)
 
     # loss_matrix1 = np.abs(truth - predict1)
     # loss1 = loss_matrix1.sum()/(144*81*2)
@@ -99,7 +100,7 @@ def test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_da
     # ——————————————————————建立模型———————————————————————————
     model = stresnet_TaxiBJ(c_conf=(len_seq3, N_flow, N_station), p_conf=(len_seq2, N_flow, N_station),
                             t_conf=(len_seq1, N_flow, N_station), nb_residual_unit=4)  # 对应修改这里,和训练阶段保持一致
-    model.load_weights('./log/stresnet/TaxiBJ/163-0.32096881.hdf5')
+    model.load_weights('./log/stresnet/TaxiBJ/191-0.43335346.hdf5')
     # model.load_weights(config.model_weights_stresnet)
     # model.summary()
     xr_test = np.zeros([1, N_station, len_seq3 * N_flow])
@@ -205,20 +206,20 @@ def test_stresnet_TaxiBJ_2D(data_week, data_day, data_recent, predict_day, truth
     data_week /= out_maximum
     data_day /= out_maximum
     # ——————————————————————建立模型———————————————————————————
-    model = stresnet_TaxiBJ_2D(c_conf=(len_seq3, N_flow, N_station), p_conf=(len_seq2, N_flow, N_station),
-                               t_conf=(len_seq1, N_flow, N_station), nb_residual_unit=4)  # 对应修改这里,和训练阶段保持一致
-    model.load_weights('./log/stresnet/TaxiBJ_2D/153-0.32400947.hdf5')
+    model = stresnet_TaxiBJ_2D(c_conf=(len_seq3, nb_flow, map_height, map_width),
+                               p_conf=(len_seq2, nb_flow, map_height, map_width),
+                               t_conf=(len_seq1, nb_flow, map_height, map_width),
+                               nb_residual_unit=4)  # 这里的unit代表了大体的网络深度
+    model.load_weights('./log/stresnet/TaxiBJ_2D/180-0.45129254.hdf5')
     # model.load_weights(config.model_weights_stresnet)
     # model.summary()
-    xr_test = np.zeros([1, N_station, len_seq3 * N_flow])
-    xp_test = np.zeros([1, N_station, len_seq2 * N_flow])
-    xt_test = np.zeros([1, N_station, len_seq1 * N_flow])
+
+    xr_test = np.zeros([1, len_seq3 * N_flow, map_height, map_width])  # 1代表样本数
+    xp_test = np.zeros([1, len_seq2 * N_flow, map_height, map_width])
+    xt_test = np.zeros([1, len_seq1 * N_flow, map_height, map_width])
 
     sum_of_predictions = 24 * 2 - config.len_seq3
     for i in range(sum_of_predictions):
-        # if i + 4 + config.len_seq1 >= len(data_week) or i + 3 + config.len_seq2 >= len(
-        #         data_day) or i + config.len_seq3 >= len(data_recent):
-        #     break
         t = data_week[
             i + config.len_seq3 - config.len_seq1 + 1:i + config.len_seq3 - config.len_seq1 + 1 + config.len_seq1, :,
             :]  # trend
@@ -229,22 +230,22 @@ def test_stresnet_TaxiBJ_2D(data_week, data_day, data_recent, predict_day, truth
 
         for j in range(len_seq3):
             for k in range(2):
-                xr_test[0, :, j * 2 + k] = r[j, :, k]
+                xr_test[0, j * 2 + k, :, :] = r[j, k, :, :]
         for j in range(len_seq2):
             for k in range(2):
-                xp_test[0, :, j * 2 + k] = p[j, :, k]
+                xp_test[0, j * 2 + k, :, :] = p[j, k, :, :]
         for j in range(len_seq1):
             for k in range(2):
-                xt_test[0, :, j * 2 + k] = t[j, :, k]
+                xt_test[0, j * 2 + k, :, :] = t[j, k, :, :]
 
         # 对应修改了这里
         ans = model.predict([xr_test, xp_test, xt_test])
         data_recent[i + config.len_seq3, :, :] = ans
     np.save(predict_day, data_recent)
 
-    truth = np.load(truth_day)[:, 0:81, :]
+    truth = np.load(truth_day)
+    truth = truth.reshape([truth.shape[0], truth.shape[2], 32, 32])
     predict = np.load(predict_day)
-
     mae_compute(truth, predict)
 
     print('Testing Done...')
@@ -252,194 +253,196 @@ def test_stresnet_TaxiBJ_2D(data_week, data_day, data_recent, predict_day, truth
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
-    ################stresnet
-    # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
-    # node_data
-    print('test_TaxiBJ_0402day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day0402.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
-    test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
-    # node_data
-    print('test_TaxiBJ_0403day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day0403.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
-    test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
-    # node_data
-    print('test_TaxiBJ_0404day-start ')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day0404.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
-    test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
-    # node_data
-    print('test_TaxiBJ_0405day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day0405.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
-    test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
-
-    ##############LSTM
-    # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM_TaxiBJ_0402day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day0402.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
-    test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
-    # node_data
-    print('test_LSTM_TaxiBJ_0403day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day0403.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
-    test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM_TaxiBJ_0404day-start ')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day0404.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
-    test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM_TaxiBJ_0405day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day0405.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
-    test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
-    #################Arima
-    # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
-    # node_data
-    print('test_Arima_TaxiBJ_0402day-start')
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0402.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
-
-    truth = np.load(truth_day)[:, 0:81, :]
-    predict = np.load(predict_day)
-    mae_compute(truth, predict)
-
-    # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
-    # node_data
-    print('test_Arima_TaxiBJ_0403day-start')
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0403.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
-    truth = np.load(truth_day)[:, 0:81, :]
-    predict = np.load(predict_day)
-    mae_compute(truth, predict)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
-    # node_data
-    print('test_Arima_TaxiBJ_0404day-start ')
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0404.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
-    truth = np.load(truth_day)[:, 0:81, :]
-    predict = np.load(predict_day)
-    mae_compute(truth, predict)
-
-    # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
-    # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
-    # node_data
-    print('test_Arima_TaxiBJ_0405day-start')
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0405.npy'
-
-    # 真实文件
-    truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
-    truth = np.load(truth_day)[:, 0:81, :]
-    predict = np.load(predict_day)
-    mae_compute(truth, predict)
-
-    # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    # ################stresnet
+    # # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
+    # # node_data
+    # print('test_TaxiBJ_0402day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day0402.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
+    # test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
+    # # node_data
+    # print('test_TaxiBJ_0403day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day0403.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
+    # test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
+    # # node_dataa
+    # print('test_TaxiBJ_0404day-start ')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day0404.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
+    # test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
+    # # node_data
+    # print('test_TaxiBJ_0405day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day0405.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
+    # test_stresnet_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    #
+    # ##############LSTM
+    # # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
+    # # node_data
+    # print('test_LSTM_TaxiBJ_0402day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_LSTM_day0402.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
+    # test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
+    # # node_data
+    # print('test_LSTM_TaxiBJ_0403day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_LSTM_day0403.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
+    # test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
+    # # node_data
+    # print('test_LSTM_TaxiBJ_0404day-start ')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_LSTM_day0404.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
+    # test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
+    # # node_data
+    # print('test_LSTM_TaxiBJ_0405day-start')
+    # data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
+    # data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
+    # data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_LSTM_day0405.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
+    # test_LSTM_TaxiBJ(data_week, data_day, data_recent, predict_day, truth_day)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    # #################Arima
+    # # -------------------------------------- test_TaxiBJ_0402day-start -------------------------------------- #
+    # # node_data
+    # print('test_Arima_TaxiBJ_0402day-start')
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0402.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0402.npy'
+    #
+    # truth = np.load(truth_day)[:, 0:81, :]
+    # predict = np.load(predict_day)
+    # mae_compute(truth, predict)
+    #
+    # # -------------------------------------- test_TaxiBJ_0402day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0403ay-start -------------------------------------- #
+    # # node_data
+    # print('test_Arima_TaxiBJ_0403day-start')
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0403.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0403.npy'
+    # truth = np.load(truth_day)[:, 0:81, :]
+    # predict = np.load(predict_day)
+    # mae_compute(truth, predict)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0404day-start -------------------------------------- #
+    # # node_data
+    # print('test_Arima_TaxiBJ_0404day-start ')
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0404.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0404.npy'
+    # truth = np.load(truth_day)[:, 0:81, :]
+    # predict = np.load(predict_day)
+    # mae_compute(truth, predict)
+    #
+    # # -------------------------------------- test_TaxiBJ_0404day-end -------------------------------------- #
+    # # -------------------------------------- test_TaxiBJ_0405day-start -------------------------------------- #
+    # # node_data
+    # print('test_Arima_TaxiBJ_0405day-start')
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_arima_TaxiBj_day0405.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/test_data/taxibj_node_data_day0405.npy'
+    # truth = np.load(truth_day)[:, 0:81, :]
+    # predict = np.load(predict_day)
+    # mae_compute(truth, predict)
+    #
+    # # -------------------------------------- test_TaxiBJ_0405day-end -------------------------------------- #
     ###############stresnet_taxibj_2D
     # -------------------------------------- test_TaxiBJ_2D_0402day-start -------------------------------------- #
     # node_data
     print('test_TaxiBJ_2D_0402day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    data_day = np.load('./npy/test_data/taxibj_node_data_day0401.npy')
+    data_day = data_day.reshape([data_day.shape[0], data_day.shape[2], 32, 32])
+    data_week = np.load('./npy/test_data/taxibj_node_data_day0326.npy')
+    data_week = data_week.reshape([data_week.shape[0], data_week.shape[2], 32, 32])
+    data_recent = np.zeros([N_hours * 2, N_flow, map_height, map_width])
 
     # 预测文件
     predict_day = './npy/mae_compare/predict_taxibj_2D_day0402.npy'
@@ -452,9 +455,11 @@ if __name__ == '__main__':
     # -------------------------------------- test_TaxiBJ_2D_0403ay-start -------------------------------------- #
     # node_data
     print('test_TaxiBJ_2D_0403day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    data_day = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    data_day = data_day.reshape([data_day.shape[0], data_day.shape[2], 32, 32])
+    data_week = np.load('./npy/test_data/taxibj_node_data_day0327.npy')
+    data_week = data_week.reshape([data_week.shape[0], data_week.shape[2], 32, 32])
+    data_recent = np.zeros([N_hours * 2, N_flow, map_height, map_width])
 
     # 预测文件
     predict_day = './npy/mae_compare/predict_taxibj_2D_day0403.npy'
@@ -467,9 +472,11 @@ if __name__ == '__main__':
     # -------------------------------------- test_TaxiBJ_2D_0404day-start -------------------------------------- #
     # node_data
     print('test_TaxiBJ_2D_0404day-start ')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    data_day = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    data_day = data_day.reshape([data_day.shape[0], data_day.shape[2], 32, 32])
+    data_week = np.load('./npy/test_data/taxibj_node_data_day0328.npy')
+    data_week = data_week.reshape([data_week.shape[0], data_week.shape[2], 32, 32])
+    data_recent = np.zeros([N_hours * 2, N_flow, map_height, map_width])
 
     # 预测文件
     predict_day = './npy/mae_compare/predict_taxibj_2D_day0404.npy'
@@ -482,9 +489,11 @@ if __name__ == '__main__':
     # -------------------------------------- test_TaxiBJ_2D_0405day-start -------------------------------------- #
     # node_data
     print('test_TaxiBJ_2D_0405day-start')
-    data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
-    data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
-    data_recent = np.zeros([N_hours * 2, N_station, N_flow])
+    data_day = np.load('./npy/test_data/taxibj_node_data_day0404.npy')
+    data_day = data_day.reshape([data_day.shape[0], data_day.shape[2], 32, 32])
+    data_week = np.load('./npy/test_data/taxibj_node_data_day0329.npy')
+    data_week = data_week.reshape([data_week.shape[0], data_week.shape[2], 32, 32])
+    data_recent = np.zeros([N_hours * 2, N_flow, map_height, map_width])
 
     # 预测文件
     predict_day = './npy/mae_compare/predict_taxibj_2D_day0405.npy'

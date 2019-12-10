@@ -3,6 +3,7 @@ from models.STResNet_TaxiBJ import stresnet_TaxiBJ_2D
 from models.resnet_TaxiBj import stresnet_TaxiBJ
 from models.LSTM_TaxiBJ import lstm_TaxiBJ
 import keras.backend as K
+from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler, EarlyStopping
 import config
 import pandas as pd
@@ -517,11 +518,13 @@ def train_Arima_TaxiBJ(data):
 
 def train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix):
     warnings.filterwarnings('ignore')
-
+    # conf = (len_seq, nb_flow, map_height, map_width)
     N_days = 31  # 用了多少天的数据(目前17个工作日)
     N_hours = config.N_hours
     N_time_slice = 2  # 1小时有6个时间片
     N_station = 81  # 81个站点
+    map_height = 32
+    map_width = 32
     N_flow = config.N_flow  # 进站 & 出站
     len_seq1 = config.len_seq1  # week时间序列长度为2
     len_seq2 = config.len_seq2  # day时间序列长度为3
@@ -569,26 +572,26 @@ def train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix):
     # ——————————————————————————————重新组织数据——————————————————————————————————
     # 将data切割出recent\period\trend数据
     length = node_data_1.shape[0]
-    xr_train = np.zeros([length, N_station, len_seq3 * N_flow])
-    xp_train = np.zeros([length, N_station, len_seq2 * nb_flow])
-    xt_train = np.zeros([length, N_station, len_seq1 * nb_flow])
+    # len_seq, nb_flow, map_height, map_width
+    xr_train = np.zeros([length, len_seq3, N_flow, map_height, map_width])
+    xp_train = np.zeros([length, len_seq2, N_flow, map_height, map_width])
+    xt_train = np.zeros([length, len_seq1, N_flow, map_height, map_width])
     # 装载xr_train, xp_train, xt_train等最终样本，所以len_seq * nb_flow = 3*2
     for i in range(length):
         for j in range(len_seq3):
             for k in range(2):
                 # 组装当前前5个时间片矩阵
-                xr_train[i, :, j * 2 + k] = node_data_3[i, j, :, k]
+                xr_train[i, j, k, :, :] = node_data_3[i, j, k, :, :]
     for i in range(length):
         for j in range(len_seq2):
             for k in range(2):
                 # 组装前一天前3个时间片矩阵
-                xp_train[i, :, j * 2 + k] = node_data_2[i, j, :, k]
+                xp_train[i, j, k, :, :] = node_data_2[i, j, k, :, :]
     for i in range(length):
         for j in range(len_seq1):
             for k in range(2):
                 # 组装前一周对应的前2个时间片矩阵
-                xt_train[i, :, j * 2 + k] = node_data_1[i, j, :, k]
-
+                xt_train[i, j, k, :, :] = node_data_1[i, j, k, :, :]
     # ——————————————————————————————SHUFFLE—————————————————————————————————————————————
     indices = np.arange(length)
     # 打乱
@@ -600,9 +603,13 @@ def train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix):
     target = target[indices]
     # ————————————————————————————————构建验证集合(24-25号数据作为验证集)—————————————————————————————————————
     # 构造得有点复杂.....2019.05.22
-    node_day_24 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')[:, 0:81, :]
-    node_day_25 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')[:, 0:81, :]
-    node_day_18 = np.load('./npy/test_data/taxibj_node_data_day0329.npy')[:, 0:81, :]
+    node_day_24 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    node_day_24 = node_day_24.reshape([node_day_24.shape[0], node_day_24.shape[2], 32, 32])
+
+    node_day_25 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')
+    node_day_25 = node_day_25.reshape([node_day_25.shape[0], node_day_25.shape[2], 32, 32])
+    node_day_18 = np.load('./npy/test_data/taxibj_node_data_day0329.npy')
+    node_day_18 = node_day_18.reshape([node_day_18.shape[0], node_day_18.shape[2], 32, 32])
     node_day_18 = np.vstack((node_day_18, node_day_18))
     node_day_18 = np.vstack((node_day_18, node_day_18))
     val_node_data = np.concatenate((node_day_18, node_day_24, node_day_25), axis=0)
@@ -623,34 +630,49 @@ def train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix):
 
     # # 将data切割出recent\period\trend数据
     val_length = val_node_data_1.shape[0]
-    xr_val = np.zeros([val_length, N_station, len_seq3 * N_flow])
-    xp_val = np.zeros([val_length, N_station, len_seq2 * N_flow])
-    xt_val = np.zeros([val_length, N_station, len_seq1 * N_flow])
+    xr_val = np.zeros([val_length, len_seq3, N_flow, map_height, map_width])
+    xp_val = np.zeros([val_length, len_seq2, N_flow, map_height, map_width])
+    xt_val = np.zeros([val_length, len_seq1, N_flow, map_height, map_width])
     # # 适应st_resnet，由于没有LSTM，所以len_seq * nb_flow = 3*2
     for i in range(val_length):
         for j in range(len_seq3):
             for k in range(2):
-                xr_val[i, :, j * 2 + k] = val_node_data_3[i, j, :, k]
+                xr_val[i, j, k, :, :] = val_node_data_3[i, j, k, :, :]
     for i in range(val_length):
         for j in range(len_seq2):
             for k in range(2):
-                xp_val[i, :, j * 2 + k] = val_node_data_2[i, j, :, k]
+                xp_val[i, j, k, :, :] = val_node_data_2[i, j, k, :, :]
     for i in range(val_length):
         for j in range(len_seq1):
             for k in range(2):
-                xt_val[i, :, j * 2 + k] = val_node_data_1[i, j, :, k]
+                xt_val[i, j, k, :, :] = val_node_data_1[i, j, k, :, :]
 
-    # 重新reshape一下
-    val_node_target = val_node_target.reshape(
-        [val_node_target.shape[0], val_node_target.shape[1] * val_node_target.shape[2], val_node_target.shape[3]])
-    target = target.reshape([target.shape[0], target.shape[1] * target.shape[2], target.shape[3]])
+    # 重新reshape一下，以适应网络
+    xr_train = xr_train.reshape(
+        [xr_train.shape[0], xr_train.shape[1] * xr_train.shape[2], xr_train.shape[3], xr_train.shape[4]])
+    xp_train = xp_train.reshape(
+        [xp_train.shape[0], xp_train.shape[1] * xp_train.shape[2], xp_train.shape[3], xp_train.shape[4]])
+    xt_train = xt_train.reshape(
+        [xt_train.shape[0], xt_train.shape[1] * xt_train.shape[2], xt_train.shape[3], xt_train.shape[4]])
+    target = np.squeeze(target, axis=1)
+
+    xr_val = xr_val.reshape(
+        [xr_val.shape[0], xr_val.shape[1] * xr_val.shape[2], xr_val.shape[3], xr_val.shape[4]])
+    xp_val = xp_val.reshape(
+        [xp_val.shape[0], xp_val.shape[1] * xp_val.shape[2], xp_val.shape[3], xp_val.shape[4]])
+    xt_val = xt_val.reshape(
+        [xt_val.shape[0], xt_val.shape[1] * xt_val.shape[2], xt_val.shape[3], xt_val.shape[4]])
+    val_node_target = np.squeeze(val_node_target, axis=1)
 
     # 这里开始跑模型，神经网络相关的，重点看这里
     # ——————————————————————————————建立模型—————————————————————————————————————
-    model = stresnet_TaxiBJ_2D(c_conf=(len_seq3, N_flow, N_station), p_conf=(len_seq2, N_flow, N_station),
-                               t_conf=(len_seq1, N_flow, N_station), nb_residual_unit=4)  # 这里的unit代表了大体的网络深度
-    model.compile(optimizer='adam',
-                  loss={'node_logits': my_own_loss_function}, metrics=['accuracy'])
+    model = stresnet_TaxiBJ_2D(c_conf=(len_seq3, nb_flow, map_height, map_width),
+                               p_conf=(len_seq2, nb_flow, map_height, map_width),
+                               t_conf=(len_seq1, nb_flow, map_height, map_width),
+                               nb_residual_unit=4)  # 这里的unit代表了大体的网络深度
+    # model.compile(optimizer='adam',
+    #               loss={'node_logits': my_own_loss_function}, metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='mae', metrics=['accuracy'])
 
     filepath = "./log/stresnet/TaxiBJ_2D/" + "{epoch:02d}-{loss:.8f}.hdf5"
     if not os.path.exists("./log/stresnet/TaxiBJ_2D/"):
@@ -674,85 +696,85 @@ def train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix):
 
 
 if __name__ == '__main__':
-    # --------------------------------stresnet训练-start---------------------------------------#
-
-    # 直接从这里开始看，程序的入口，加载统计好的流量文件
-    Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
-    Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
-        [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
-         Metro_Flow_Matrix.shape[1]])
-    Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
-    train_stresnet(Metro_Flow_Matrix)
-
-    # --------------------------------stresnet训练-end---------------------------------------#
-
-    # --------------------------------LSTM训练-start---------------------------------------#
-
-    # 直接从这里开始看，程序的入口，加载统计好的流量文件
-    Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
-    Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
-        [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
-         Metro_Flow_Matrix.shape[1]])
-    Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
-    train_LSTM(Metro_Flow_Matrix)
-
-    # --------------------------------LSTM训练-end---------------------------------------#
-
-    # --------------------------------Arima训练_0402-start---------------------------------------#
-    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
-    data_train = data_train.reshape(
-        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
-         data_train.shape[1]])
-    data_train = data_train[:, 0:81, :]
-    predict_arima = train_Arima_TaxiBJ(data_train)
-    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0402.npy', predict_arima)
-    # --------------------------------Arima训练-end---------------------------------------#
-    # --------------------------------Arima训练_0403-start---------------------------------------#
-    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
-    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
-    data_train = data_train.reshape(
-        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
-         data_train.shape[1]])
-    data_train = np.vstack((data_train, data_train1))
-    data_train = data_train[:, 0:81, :]
-    predict_arima = train_Arima_TaxiBJ(data_train)
-    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0403.npy', predict_arima)
-    # --------------------------------Arima训练_0403-end---------------------------------------#
-
-    # --------------------------------Arima训练_0404-start---------------------------------------#
-    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
-    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
-    data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
-    data_train = data_train.reshape(
-        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
-         data_train.shape[1]])
-    data_train = np.vstack((data_train, data_train1, data_train2))
-    data_train = data_train[:, 0:81, :]
-    predict_arima = train_Arima_TaxiBJ(data_train)
-    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0404.npy', predict_arima)
-    # --------------------------------Arima训练_0404-end---------------------------------------#
-
-    # --------------------------------Arima训练_0405-start---------------------------------------#
-    data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
-    data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
-    data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
-    data_train3 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')
-    data_train = data_train.reshape(
-        [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
-         data_train.shape[1]])
-    data_train = np.vstack((data_train, data_train1, data_train2, data_train3))
-    data_train = data_train[:, 0:81, :]
-    predict_arima = train_Arima_TaxiBJ(data_train)
-    np.save('./npy/mae_compare/predict_arima_TaxiBj_day0405.npy', predict_arima)
-    # --------------------------------Arima训练_0405-end---------------------------------------#
+    # # --------------------------------stresnet训练-start---------------------------------------#
+    #
+    # # 直接从这里开始看，程序的入口，加载统计好的流量文件
+    # Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
+    # Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
+    #     [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
+    #      Metro_Flow_Matrix.shape[1]])
+    # Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
+    # train_stresnet(Metro_Flow_Matrix)
+    #
+    # # --------------------------------stresnet训练-end---------------------------------------#
+    #
+    # # --------------------------------LSTM训练-start---------------------------------------#
+    #
+    # # 直接从这里开始看，程序的入口，加载统计好的流量文件
+    # Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
+    # Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
+    #     [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
+    #      Metro_Flow_Matrix.shape[1]])
+    # Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
+    # train_LSTM(Metro_Flow_Matrix)
+    #
+    # # --------------------------------LSTM训练-end---------------------------------------#
+    #
+    # # --------------------------------Arima训练_0402-start---------------------------------------#
+    # data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    # data_train = data_train.reshape(
+    #     [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+    #      data_train.shape[1]])
+    # data_train = data_train[:, 0:81, :]
+    # predict_arima = train_Arima_TaxiBJ(data_train)
+    # np.save('./npy/mae_compare/predict_arima_TaxiBj_day0402.npy', predict_arima)
+    # # --------------------------------Arima训练-end---------------------------------------#
+    # # --------------------------------Arima训练_0403-start---------------------------------------#
+    # data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    # data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    # data_train = data_train.reshape(
+    #     [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+    #      data_train.shape[1]])
+    # data_train = np.vstack((data_train, data_train1))
+    # data_train = data_train[:, 0:81, :]
+    # predict_arima = train_Arima_TaxiBJ(data_train)
+    # np.save('./npy/mae_compare/predict_arima_TaxiBj_day0403.npy', predict_arima)
+    # # --------------------------------Arima训练_0403-end---------------------------------------#
+    #
+    # # --------------------------------Arima训练_0404-start---------------------------------------#
+    # data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    # data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    # data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    # data_train = data_train.reshape(
+    #     [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+    #      data_train.shape[1]])
+    # data_train = np.vstack((data_train, data_train1, data_train2))
+    # data_train = data_train[:, 0:81, :]
+    # predict_arima = train_Arima_TaxiBJ(data_train)
+    # np.save('./npy/mae_compare/predict_arima_TaxiBj_day0404.npy', predict_arima)
+    # # --------------------------------Arima训练_0404-end---------------------------------------#
+    #
+    # # --------------------------------Arima训练_0405-start---------------------------------------#
+    # data_train = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    # data_train1 = np.load('./npy/test_data/taxibj_node_data_day0402.npy')
+    # data_train2 = np.load('./npy/test_data/taxibj_node_data_day0403.npy')
+    # data_train3 = np.load('./npy/test_data/taxibj_node_data_day0404.npy')
+    # data_train = data_train.reshape(
+    #     [data_train.shape[0], data_train.shape[2] * data_train.shape[3],
+    #      data_train.shape[1]])
+    # data_train = np.vstack((data_train, data_train1, data_train2, data_train3))
+    # data_train = data_train[:, 0:81, :]
+    # predict_arima = train_Arima_TaxiBJ(data_train)
+    # np.save('./npy/mae_compare/predict_arima_TaxiBj_day0405.npy', predict_arima)
+    # # --------------------------------Arima训练_0405-end---------------------------------------#
     # --------------------------------stresnet_2D训练-start---------------------------------------#
 
     # 直接从这里开始看，程序的入口，加载统计好的流量文件
-    Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')  # shape=(2448, 81, 2)
-    Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
-        [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
-         Metro_Flow_Matrix.shape[1]])
-    Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
+    Metro_Flow_Matrix = np.load('./npy/train_data/taxibj_node_data_month3_23.npy')
+    # Metro_Flow_Matrix = Metro_Flow_Matrix.reshape(
+    #     [Metro_Flow_Matrix.shape[0], Metro_Flow_Matrix.shape[2] * Metro_Flow_Matrix.shape[3],
+    #      Metro_Flow_Matrix.shape[1]])
+    # Metro_Flow_Matrix = Metro_Flow_Matrix[:, 0:81, :]
     train_stresnet_TaxiBJ_2D(Metro_Flow_Matrix)
 
     # --------------------------------stresnet训练-end---------------------------------------#
