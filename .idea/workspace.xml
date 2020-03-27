@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a67c2611-899b-4280-a275-01d89437a5fd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/errors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log/stresnet/2_3_5/predict_day_25.npy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/multiscale_multitask_STResNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/multiscale_multitask_STResNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-    </list>
+    <list default="true" id="a67c2611-899b-4280-a275-01d89437a5fd" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -520,8 +513,16 @@
       <workItem from="1578554807977" duration="66000" />
       <workItem from="1585209953867" duration="638000" />
       <workItem from="1585274945297" duration="185000" />
-      <workItem from="1585296675232" duration="6557000" />
+      <workItem from="1585296675232" duration="6817000" />
     </task>
+    <task id="LOCAL-00001" summary="多通道测试28号">
+      <created>1585312627365</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1585312627365</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -557,7 +558,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178681000" />
+    <option name="totallyTimeSpent" value="178941000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -569,7 +570,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.33055976" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -582,7 +583,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32903227" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="8" visible="true" weight="0.32903227" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32903227" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.28064516" />
@@ -597,6 +598,10 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="多通道测试28号" />
+    <option name="LAST_COMMIT_MESSAGE" value="多通道测试28号" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
