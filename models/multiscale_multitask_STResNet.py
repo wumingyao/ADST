@@ -83,7 +83,6 @@ def ResUnits(residual_unit, nb_filter, repetations=1):
             input = residual_unit(nb_filter=nb_filter)(input)
             se = se_block(input, num_filters=nb_filter)
         return se
-
     return f
 
 

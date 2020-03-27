@@ -781,24 +781,21 @@ def train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix):
 
 if __name__ == '__main__':
     # --------------------------------stresnet训练-start---------------------------------------#
-
     # 直接从这里开始看，程序的入口，加载统计好的流量文件
     Metro_Flow_Matrix = np.load('./npy/train_data/raw_node_data.npy')  # shape=(2448, 81, 2)
     Metro_Edge_Flow_Matrix = np.load('./npy/train_data/raw_edge_data.npy')  # shape=(2448, 81, 81)
     train_stresnet(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix)
-
     # --------------------------------stresnet训练-end---------------------------------------#
 
-    # --------------------------------LSTM训练-start---------------------------------------#
-
-    # 直接从这里开始看，程序的入口，加载统计好的流量文件
-    Metro_Flow_Matrix = np.load('./npy/train_data/raw_node_data.npy')  # shape=(2448, 81, 2)
-    Metro_Edge_Flow_Matrix = np.load('./npy/train_data/raw_edge_data.npy')  # shape=(2448, 81, 81)
-    train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix)
-
-    # --------------------------------LSTM训练-end---------------------------------------#
-
-    # --------------------------------Arima训练-start---------------------------------------#
-    data_train = np.load('./npy/train_data/raw_node_data.npy')/ 30
-    train_Arima(data_train)
-    # --------------------------------Arima训练-end---------------------------------------#
+    # # --------------------------------LSTM训练-start---------------------------------------#
+    # # 直接从这里开始看，程序的入口，加载统计好的流量文件
+    # Metro_Flow_Matrix = np.load('./npy/train_data/raw_node_data.npy')  # shape=(2448, 81, 2)
+    # Metro_Edge_Flow_Matrix = np.load('./npy/train_data/raw_edge_data.npy')  # shape=(2448, 81, 81)
+    # train_LSTM(Metro_Flow_Matrix, Metro_Edge_Flow_Matrix)
+    #
+    # # --------------------------------LSTM训练-end---------------------------------------#
+    #
+    # # --------------------------------Arima训练-start---------------------------------------#
+    # data_train = np.load('./npy/train_data/raw_node_data.npy')/ 30
+    # train_Arima(data_train)
+    # # --------------------------------Arima训练-end---------------------------------------#

@@ -447,50 +447,50 @@ if __name__ == '__main__':
     # predict = np.load('D:/ADST/log/stresnet/3_3_5/predict_day_25.npy')
     # mae_compute(truth, predict)
 
-    # -------------------------------------- test_stresnet_multi_step-25day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet_multi_step-25day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day24.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day18.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day24.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day25_5_steps_pre.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day25.npy'
-    test_stresnet_multi_step_pre(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge,
-                                 predict_day,
-                                 truth_day, config.pre_step)
-
-    # -------------------------------------- test_stresnet_multi_step-25day-end -------------------------------------- #
-
-    # -------------------------------------- test_stresnet-28day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet-28day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day25.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day21.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day25.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day21.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day28.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day28.npy'
-    test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-                  truth_day)
-
-    # -------------------------------------- test_stresnet-28day-end -------------------------------------- #
+    # # -------------------------------------- test_stresnet_multi_step-25day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet_multi_step-25day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day24.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day18.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day24.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day25_5_steps_pre.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day25.npy'
+    # test_stresnet_multi_step_pre(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge,
+    #                              predict_day,
+    #                              truth_day, config.pre_step)
+    #
+    # # -------------------------------------- test_stresnet_multi_step-25day-end -------------------------------------- #
+    #
+    # # -------------------------------------- test_stresnet-28day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet-28day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day25.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day21.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day25.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day21.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day28.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day28.npy'
+    # test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    #               truth_day)
+    #
+    # # -------------------------------------- test_stresnet-28day-end -------------------------------------- #
 
     # -------------------------------------- test_stresnet-25day-start -------------------------------------- #
     # node_data
@@ -513,200 +513,200 @@ if __name__ == '__main__':
                   truth_day)
 
     # -------------------------------------- test_stresnet-25day-end -------------------------------------- #
-
-    # -------------------------------------- test_stresnet-20day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet-20day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day19.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day13.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day19.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day13.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day20.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day20.npy'
-    test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-                  truth_day)
-    # -------------------------------------- test_stresnet-20day-end -------------------------------------- #
-
-    # -------------------------------------- test_stresnet-19day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet-19day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day18.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day12.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day19.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day19.npy'
-    test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-                  truth_day)
-
-    # -------------------------------------- test_stresnet-19day-end -------------------------------------- #
-
-    # -------------------------------------- test_stresnet-13day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet-13day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day12.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day6.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day6.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day13.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day13.npy'
-    test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-                  truth_day)
-
-    # -------------------------------------- test_stresnet-13day-end -------------------------------------- #
-
-    # -------------------------------------- test_stresnet-12day-start -------------------------------------- #
-    # node_data
-    print('test_stresnet-12day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day11.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day5.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day11.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day5.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day12.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day12.npy'
-    test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-                  truth_day)
-
-    # -------------------------------------- test_stresnet-12day-end -------------------------------------- #
-
-    # -------------------------------------- test_Arima-25day-start -------------------------------------- #
-    print('test_Arima-25day-start')
-    predict_day = './npy/mae_compare/predict_arima_day25.npy'
-    truth_day = './npy/mae_compare/truth_day25.npy'
-    truth = np.load(truth_day)
-    predict = np.load(predict_day)
-    # truth = truth[0:10, :, :]
-    # predict = predict[0:10, :, :]
-    mae_compute(truth, predict)
-    print('Testing Done...')
-    # -------------------------------------- test_Arima-25day-end -------------------------------------- #
-
-
-
-    # -------------------------------------- test_predict_stnn-25day-start -------------------------------------- #
-    print('test_predict_stnn-25day-start')
-    predict_day = './npy/mae_compare/predict_stnn.npy'
-    truth_day = './npy/mae_compare/truth_day25.npy'
-    truth = np.load(truth_day)
-    predict = np.load(predict_day)
-    # truth = truth[0:5, :, :]
-    # predict = predict[0:5, :, :]
-    mae_compute(truth, predict)
-    print('Testing Done...')
-    # -------------------------------------- test_predict_stnn-25day-end -------------------------------------- #
-
-    # -------------------------------------- test_LSTM-25day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM-25day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day24.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day18.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day24.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_day25.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day25.npy'
-    test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-              truth_day)
-    # -------------------------------------- test_LSTM-25day-end--------------------------------------#
-
-    # -------------------------------------- test_LSTM-19day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM-19day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day18.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day12.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day19.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day19.npy'
-    test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-              truth_day)
-    # -------------------------------------- test_LSTM-19day-end--------------------------------------#
-
-    # -------------------------------------- test_LSTM-20day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM-20day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day19.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day13.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day19.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day13.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day20.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day20.npy'
-    test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-              truth_day)
-    # -------------------------------------- test_LSTM-20day-end--------------------------------------#
-
-    # -------------------------------------- test_LSTM-28day-start -------------------------------------- #
-    # node_data
-    print('test_LSTM-28day-start')
-    data_day = np.load('./npy/test_data/raw_node_data_day25.npy')
-    data_week = np.load('./npy/test_data/raw_node_data_day21.npy')
-    data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
-
-    # edge_data
-    data_day_edge = np.load('./npy/test_data/raw_edge_data_day25.npy')
-    data_week_edge = np.load('./npy/test_data/raw_edge_data_day21.npy')
-    data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
-
-    # 预测文件
-    predict_day = './npy/mae_compare/predict_LSTM_day28.npy'
-
-    # 真实文件
-    truth_day = './npy/mae_compare/truth_day28.npy'
-    test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
-              truth_day)
-    # -------------------------------------- test_LSTM-28day-end--------------------------------------#
+    #
+    # # -------------------------------------- test_stresnet-20day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet-20day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day19.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day13.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day19.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day13.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day20.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day20.npy'
+    # test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    #               truth_day)
+    # # -------------------------------------- test_stresnet-20day-end -------------------------------------- #
+    #
+    # # -------------------------------------- test_stresnet-19day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet-19day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day18.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day12.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day19.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day19.npy'
+    # test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    #               truth_day)
+    #
+    # # -------------------------------------- test_stresnet-19day-end -------------------------------------- #
+    #
+    # # -------------------------------------- test_stresnet-13day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet-13day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day12.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day6.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day6.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day13.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day13.npy'
+    # test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    #               truth_day)
+    #
+    # # -------------------------------------- test_stresnet-13day-end -------------------------------------- #
+    #
+    # # -------------------------------------- test_stresnet-12day-start -------------------------------------- #
+    # # node_data
+    # print('test_stresnet-12day-start')
+    # data_day = np.load('./npy/test_data/raw_node_data_day11.npy')
+    # data_week = np.load('./npy/test_data/raw_node_data_day5.npy')
+    # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    #
+    # # edge_data
+    # data_day_edge = np.load('./npy/test_data/raw_edge_data_day11.npy')
+    # data_week_edge = np.load('./npy/test_data/raw_edge_data_day5.npy')
+    # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    #
+    # # 预测文件
+    # predict_day = './npy/mae_compare/predict_day12.npy'
+    #
+    # # 真实文件
+    # truth_day = './npy/mae_compare/truth_day12.npy'
+    # test_stresnet(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    #               truth_day)
+    #
+    # # -------------------------------------- test_stresnet-12day-end -------------------------------------- #
+    #
+    # # # -------------------------------------- test_Arima-25day-start -------------------------------------- #
+    # # print('test_Arima-25day-start')
+    # # predict_day = './npy/mae_compare/predict_arima_day25.npy'
+    # # truth_day = './npy/mae_compare/truth_day25.npy'
+    # # truth = np.load(truth_day)
+    # # predict = np.load(predict_day)
+    # # # truth = truth[0:10, :, :]
+    # # # predict = predict[0:10, :, :]
+    # # mae_compute(truth, predict)
+    # # print('Testing Done...')
+    # # # -------------------------------------- test_Arima-25day-end -------------------------------------- #
+    # #
+    # #
+    # #
+    # # # -------------------------------------- test_predict_stnn-25day-start -------------------------------------- #
+    # # print('test_predict_stnn-25day-start')
+    # # predict_day = './npy/mae_compare/predict_stnn.npy'
+    # # truth_day = './npy/mae_compare/truth_day25.npy'
+    # # truth = np.load(truth_day)
+    # # predict = np.load(predict_day)
+    # # # truth = truth[0:5, :, :]
+    # # # predict = predict[0:5, :, :]
+    # # mae_compute(truth, predict)
+    # # print('Testing Done...')
+    # # # -------------------------------------- test_predict_stnn-25day-end -------------------------------------- #
+    # #
+    # # # -------------------------------------- test_LSTM-25day-start -------------------------------------- #
+    # # # node_data
+    # # print('test_LSTM-25day-start')
+    # # data_day = np.load('./npy/test_data/raw_node_data_day24.npy')
+    # # data_week = np.load('./npy/test_data/raw_node_data_day18.npy')
+    # # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    # #
+    # # # edge_data
+    # # data_day_edge = np.load('./npy/test_data/raw_edge_data_day24.npy')
+    # # data_week_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
+    # # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    # #
+    # # # 预测文件
+    # # predict_day = './npy/mae_compare/predict_day25.npy'
+    # #
+    # # # 真实文件
+    # # truth_day = './npy/mae_compare/truth_day25.npy'
+    # # test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    # #           truth_day)
+    # # # -------------------------------------- test_LSTM-25day-end--------------------------------------#
+    # #
+    # # # -------------------------------------- test_LSTM-19day-start -------------------------------------- #
+    # # # node_data
+    # # print('test_LSTM-19day-start')
+    # # data_day = np.load('./npy/test_data/raw_node_data_day18.npy')
+    # # data_week = np.load('./npy/test_data/raw_node_data_day12.npy')
+    # # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    # #
+    # # # edge_data
+    # # data_day_edge = np.load('./npy/test_data/raw_edge_data_day18.npy')
+    # # data_week_edge = np.load('./npy/test_data/raw_edge_data_day12.npy')
+    # # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    # #
+    # # # 预测文件
+    # # predict_day = './npy/mae_compare/predict_LSTM_day19.npy'
+    # #
+    # # # 真实文件
+    # # truth_day = './npy/mae_compare/truth_day19.npy'
+    # # test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    # #           truth_day)
+    # # # -------------------------------------- test_LSTM-19day-end--------------------------------------#
+    # #
+    # # # -------------------------------------- test_LSTM-20day-start -------------------------------------- #
+    # # # node_data
+    # # print('test_LSTM-20day-start')
+    # # data_day = np.load('./npy/test_data/raw_node_data_day19.npy')
+    # # data_week = np.load('./npy/test_data/raw_node_data_day13.npy')
+    # # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    # #
+    # # # edge_data
+    # # data_day_edge = np.load('./npy/test_data/raw_edge_data_day19.npy')
+    # # data_week_edge = np.load('./npy/test_data/raw_edge_data_day13.npy')
+    # # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    # #
+    # # # 预测文件
+    # # predict_day = './npy/mae_compare/predict_LSTM_day20.npy'
+    # #
+    # # # 真实文件
+    # # truth_day = './npy/mae_compare/truth_day20.npy'
+    # # test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    # #           truth_day)
+    # # # -------------------------------------- test_LSTM-20day-end--------------------------------------#
+    # #
+    # # # -------------------------------------- test_LSTM-28day-start -------------------------------------- #
+    # # # node_data
+    # # print('test_LSTM-28day-start')
+    # # data_day = np.load('./npy/test_data/raw_node_data_day25.npy')
+    # # data_week = np.load('./npy/test_data/raw_node_data_day21.npy')
+    # # data_recent = np.zeros([N_hours * N_time_slice, N_station, N_flow])
+    # #
+    # # # edge_data
+    # # data_day_edge = np.load('./npy/test_data/raw_edge_data_day25.npy')
+    # # data_week_edge = np.load('./npy/test_data/raw_edge_data_day21.npy')
+    # # data_recent_edge = np.zeros([N_hours * N_time_slice, N_station, N_station])
+    # #
+    # # # 预测文件
+    # # predict_day = './npy/mae_compare/predict_LSTM_day28.npy'
+    # #
+    # # # 真实文件
+    # # truth_day = './npy/mae_compare/truth_day28.npy'
+    # # test_LSTM(data_week, data_day, data_recent, data_week_edge, data_day_edge, data_recent_edge, predict_day,
+    # #           truth_day)
+    # # # -------------------------------------- test_LSTM-28day-end--------------------------------------#
