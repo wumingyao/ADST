@@ -3,11 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a67c2611-899b-4280-a275-01d89437a5fd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/errors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log/LSTM/2_3_5/history.csv" beforeDir="false" afterPath="$PROJECT_DIR$/log/LSTM/2_3_5/history.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/STResNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/STResNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mulsteps_pre_Hangzhou.py" beforeDir="false" afterPath="$PROJECT_DIR$/mulsteps_pre_Hangzhou.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -269,7 +264,8 @@
       <workItem from="1585629824387" duration="1566000" />
       <workItem from="1585644580212" duration="5330000" />
       <workItem from="1585664023320" duration="134000" />
-      <workItem from="1586337613791" duration="483000" />
+      <workItem from="1586337613791" duration="1341000" />
+      <workItem from="1586341507352" duration="441000" />
     </task>
     <task id="LOCAL-00001" summary="多通道测试28号">
       <created>1585312627365</created>
@@ -285,7 +281,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585485256456</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update for TVT">
+      <created>1586338334001</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1586338334001</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView">
@@ -303,13 +306,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="多通道测试28号" />
     <MESSAGE value="多步预测完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="多步预测完成" />
+    <MESSAGE value="update for TVT" />
+    <option name="LAST_COMMIT_MESSAGE" value="update for TVT" />
   </component>
   <component name="WindowStateProjectService">
     <state x="413" y="115" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1585569507605">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
     <state x="413" y="115" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.738@0.0.1366.738" timestamp="1585569507605" />
+    <state x="283" y="0" key="CommitChangelistDialog2" timestamp="1586338320268">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="283" y="0" key="CommitChangelistDialog2/0.0.1366.738@0.0.1366.738" timestamp="1586338320268" />
     <state x="463" y="124" key="FileChooserDialogImpl" timestamp="1585664188259">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
@@ -346,6 +354,10 @@
       <screen x="0" y="0" width="1366" height="738" />
     </state>
     <state width="1323" height="339" key="GridCell.Tab.1.right/0.0.1366.738@0.0.1366.738" timestamp="1585648812858" />
+    <state x="275" y="102" key="Vcs.Push.Dialog.v2" timestamp="1586341748663">
+      <screen x="0" y="0" width="1366" height="738" />
+    </state>
+    <state x="275" y="102" key="Vcs.Push.Dialog.v2/0.0.1366.738@0.0.1366.738" timestamp="1586341748663" />
     <state x="346" y="59" width="672" height="678" key="search.everywhere.popup" timestamp="1585630381863">
       <screen x="0" y="0" width="1366" height="738" />
     </state>
