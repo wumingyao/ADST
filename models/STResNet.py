@@ -188,3 +188,52 @@ def stresnet(c_conf=(3, 2, 81), p_conf=(3, 2, 81), t_conf=(3, 2, 81),
     # 输出为：预测的masking_node数据、masking_edge数据
     model = Model(main_inputs, main_outputs)
     return model
+
+
+def stresnet_Wang(c_conf=(3, 81, 2), p_conf=(3, 81, 2), t_conf=(3, 81, 2),
+             nb_task1_residual_unit=10):
+    '''
+    C - Temporal Closeness
+    P - Period
+    T - Trend
+    c_conf = (len_seq, lines, stations)  # 　车上人数张量　趟次信息张量
+    c1_conf = (len_seq, lines, lines, stations)　　#　　车之间转移张量　
+    c2_conf = (len_seq, lines, stations, inflow/outflow)　　#  上下车人数
+    external_dim为外部信息维度
+    '''
+    # main input
+    main_inputs = []
+    outputs = []
+    nb_flows = 2
+    nb_stations = 81
+    # task 1: 输入为趟次信息张量，用c_conf配置信息
+    # 针对C、P、T三种时间范围的数据进行卷积
+    for conf in [c_conf, p_conf, t_conf]:
+        if conf is not None:
+            len_seq, stations, features = conf
+            input1 = Input(shape=(stations, features * len_seq))
+            main_inputs.append(input1)
+            # Conv1
+            task1_conv1 = Convolution1D(
+                nb_filter=64,  filter_length=3, border_mode="same")(input1)
+            # [nb_residual_unit] Residual Units
+            task1_residual_output = ResUnits(_residual_unit, nb_filter=64,
+                                       repetations=nb_task1_residual_unit)(task1_conv1)
+            # Conv2
+            task1_activation = Activation('relu')(task1_residual_output)
+            task1_conv2 = Convolution1D(
+                nb_filter=64, filter_length=3, border_mode="same")(task1_activation)
+            # Multi-scale
+            task1_conv3_1 = Convolution1D(
+                nb_filter=nb_flows, filter_length=3, border_mode="same")(task1_conv2)
+            task1_reshape = Reshape((nb_stations, nb_flows))(task1_conv3_1)
+            outputs.append(task1_reshape)
+
+    if len(outputs) == 1:
+        outputs = outputs[0]
+    else:
+        outputs = Add()(outputs)
+
+    # 完成模型搭建
+    model = Model(main_inputs, outputs)
+    return model

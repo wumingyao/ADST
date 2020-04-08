@@ -9,48 +9,48 @@
 * windows10
 
 ### ADST-Net.png
-* ADST模型网络图
+* ADST Model network diagram
 
 ### test.py
-* 该脚本用于测试模型，分别是ADST模型(stresnet)、LSTM、arima模型的训练，stresnet和LSTM所使用的模型路径在config.py里面修改
-* 执行python test.py
+* The script is used to test the model, including the training of ADST model (street net), LSTM and ARIMA model. The model path used by street net and LSTM is modified in config.py
+* Run python test.py
 
 ### train.py
-* 该脚本用于训练模型，分别是ADST模型(stresnet)、LSTM、arima模型的训练，模型参数对应在config.py里面修改
-* 执行python train.py
+* This script is used to train models, including ADST model (street net), LSTM and ARIMA model. The model parameters are modified in config.py
+* Run python train.py
 
 ### train_multi.py
-* 该脚本用于训练ADST多步模型，模型参数对应在config.py里面修改
-* 执行python train_multi.py
+* This script is used to train the ADST multi-step model, and the model parameters are modified in config.py
+* Run python train_multi.py
 
 ### config.py
-* 修改模型配置参数脚本
+* Modify model configuration parameter script
 
 ### read_files.py
-* 将原始数据（csv格式）读取并保存为npy格式
+* Read and save the original data (CSV format) as NPY format
 
 ### npy
-* train_data:存放训练所需要的npy文件
-* test_data:存放测试所需要的npy文件
-* mae_compare:存放真实值与预测值的npy文件
+* train_data:Store NPY files for training
+* test_data:Store NPY files required for testing
+* mae_compare:NPY files for storing real and predicted values
 
 ### train_TaxiBJ.py
-* 该脚本使用TaxiBJ数据集训练ADST模型
+* This script uses taxibj data set to train ADST model
 
 ### test_TaxiBJ.py
-* 该脚本用于测试使用TaxiBJ数据集训练的ADST模型
+* This script is used to test the ADST model trained with taxibj dataset
 
 ### errors.py
-* 四个指标脚本，期中mase需要在python2环境下，导入pycast包
+* Four indicator scripts. In the interim, mass needs to import pycast package in python2 environment
 
 ### models文件夹
-* 存放各类模型脚本
+* Store various model scripts 
 
 
 ### origin_dataSet
-* 存放原始数据文件(.csv)
-* 百度云网盘链接：https://pan.baidu.com/s/1bALCLtrxYcGQb9P1zbgFMg 
-* 提取码：rami
+* Store original data file(.csv)
+* Baidu cloud disk link：https://pan.baidu.com/s/1bALCLtrxYcGQb9P1zbgFMg 
+* Extraction code：rami
 
 
 ### Geoman基线链接

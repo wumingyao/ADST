@@ -432,6 +432,6 @@ def test_Arima(data):
     # print(mae, mape, mdae)
 
 #
-# pre = np.load('./npy/mae_compare/predict_day28.npy')
-# truth = np.load('./npy/mae_compare/truth_day28.npy')
-# mae_compute(truth,pre)
+pre = np.load('./predict_STRES_25.npy')
+truth = np.load('./npy/mae_compare/truth_day25.npy')
+mae_compute(truth,pre)

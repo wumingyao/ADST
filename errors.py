@@ -40,19 +40,8 @@ def Made(truth, predict):
     made = np.median(np.abs(truth - predict))
     return made
 
-#
-# def Mase(predict, truth):
-#     predict = predict.reshape([predict.shape[0] * predict.shape[1], predict.shape[2]])
-#     truth = truth.reshape([truth.shape[0] * truth.shape[1], truth.shape[2]])
-#     historyLength = 1
-#     em = MeanAbsoluteScaledError(historyLength=historyLength)
-#     historyLength += 1
-#     predict = predict[historyLength:]
-#     truth = truth[historyLength:]
-#     differencelist = []
-#     for orgValue, forValue in zip(predict, truth):
-#         difference = orgValue[1] - forValue[1]
-#         difference = abs(difference)
-#         differencelist.append(em.local_error([orgValue[1]], [forValue[1]]))
-#         assert difference == em.local_error([orgValue[1]], [forValue[1]])
-#     return sum(differencelist) / len(differencelist)
+
+truth = np.load('npy/test_data/taxibj_node_data_day0405.npy')[:, 0:81, :]
+predict = np.load('npy/mae_compare/predict_stnn_bj_45.npy')
+
+print(Mae(truth, predict), Mape(truth, predict), Made(truth, predict))
